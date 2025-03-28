@@ -2,7 +2,7 @@ from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column
 
 from .base import Base
-from .schemas import Status
+from ..schemas.status import Status
 
 
 class Participation(Base):

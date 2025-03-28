@@ -10,6 +10,8 @@ from redis.asyncio.client import Redis
 
 import handlers
 import dialogs
+from database.core import async_sessionmaker
+from middlewares.dependencies import DependenciesMiddleware
 from utils.setup_logging import setup_logging
 from config import config
 
@@ -27,6 +29,7 @@ async def main():
     dp = Dispatcher(storage=storage)
 
     dp.include_routers(handlers.router, dialogs.router)
+    dp.update.middleware(DependenciesMiddleware(sessionmaker=async_sessionmaker))
 
     await bot.delete_webhook(drop_pending_updates=True)
 
