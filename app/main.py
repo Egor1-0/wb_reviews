@@ -8,7 +8,8 @@ from aiogram.enums.parse_mode import ParseMode
 from aiogram_dialog import setup_dialogs
 from redis.asyncio.client import Redis
 
-from handlers import router
+import handlers
+import dialogs
 from utils.setup_logging import setup_logging
 from config import config
 
@@ -25,11 +26,11 @@ async def main():
     bot = Bot(token=config.bot.TOKEN.get_secret_value(), default=DefaultBotProperties(parse_mode=ParseMode.HTML))
     dp = Dispatcher(storage=storage)
 
-    dp.include_routers(router)
+    dp.include_routers(handlers.router, dialogs.router)
 
     await bot.delete_webhook(drop_pending_updates=True)
 
-    # setup_dialogs(dp)  # настройка диалогов
+    setup_dialogs(dp)  # настройка диалогов
     await dp.start_polling(bot)
 
 
