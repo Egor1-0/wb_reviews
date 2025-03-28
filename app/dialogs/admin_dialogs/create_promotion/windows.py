@@ -1,10 +1,11 @@
 from aiogram_dialog import Window
 from aiogram_dialog.widgets.input import TextInput
-from aiogram_dialog.widgets.kbd import Cancel, Next, Back
+from aiogram_dialog.widgets.kbd import Cancel, Back
 from aiogram_dialog.widgets.text import Const
 
 from states.admin import CreatePromotion
-from ..callbacks import save_name, save_keywords, save_count_and_add_to_db, error_count
+from dialogs.admin_dialogs.create_promotion.callbacks import save_name, save_keywords, save_count_and_add_to_db, \
+    error_count
 
 get_name_promotion_window = Window(
     Const('Введите название акции'),

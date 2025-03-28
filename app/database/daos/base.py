@@ -15,7 +15,7 @@ class BaseDao:
     async def create(cls, session: AsyncSession, obj: BaseModel | dict) -> Type[ModelType]:
         if not isinstance(obj, dict):
             obj = obj.model_dump(exclude_unset=True)
-        model_in = cls.model(*obj)
+        model_in = cls.model(**obj)
         session.add(model_in)
         await session.commit()
         await session.refresh(model_in)
@@ -42,7 +42,7 @@ class BaseDao:
         if not isinstance(values, dict):
             values = values.model_dump(exclude_unset=True)
 
-        query = update(cls.model).filter_by(**filters).values(values).returning()
+        query = update(cls.model).filter_by(**filters).values(**values).returning()
         res = await session.execute(query)
 
         return res.scalar()

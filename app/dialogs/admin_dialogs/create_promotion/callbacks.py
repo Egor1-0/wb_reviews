@@ -1,7 +1,9 @@
-from aiogram.types import CallbackQuery, Message
+from aiogram.types import Message
 from aiogram_dialog import DialogManager
 from aiogram_dialog.widgets.input import ManagedTextInput
-from aiogram_dialog.widgets.kbd import Button
+
+from database.daos import PromotionDao
+from database.schemas.promotion import CreatePromotion
 
 
 async def save_name(message: Message, widget: ManagedTextInput, dialog_manager: DialogManager, data: str):
@@ -14,12 +16,14 @@ async def save_keywords(message: Message, widget: ManagedTextInput, dialog_manag
     await dialog_manager.next()
 
 
-async def save_count_and_add_to_db(message: Message, widget: ManagedTextInput, dialog_manager: DialogManager, data: str):
-    count = data
+async def save_count_and_add_to_db(message: Message, widget: ManagedTextInput, dialog_manager: DialogManager,
+                                   data: str):
+    count = int(data)
     keywords = dialog_manager.dialog_data['keywords']
     name = dialog_manager.dialog_data['name']
 
-    ... # todo save to db
+    promotion = CreatePromotion(name=name, keywords=keywords, count=count)
+    await PromotionDao.create(dialog_manager.middleware_data['session'], promotion)
 
     await message.answer('Акция создана')
     await dialog_manager.done()

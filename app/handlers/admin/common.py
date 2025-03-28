@@ -1,11 +1,10 @@
 from aiogram import Router, F
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
-from aiogram.types import Message, CallbackQuery
-from aiogram_dialog import DialogManager, StartMode, ShowMode
+from aiogram.types import Message
+from aiogram_dialog import DialogManager, StartMode
 
-import keyboards.admin as kb
-from states.admin import CreatePromotion
+from states.admin import Menu
 
 router = Router()
 
@@ -13,4 +12,4 @@ router = Router()
 @router.message(Command('admin'))
 async def main_admin_menu_handler(message: Message, state: FSMContext, dialog_manager: DialogManager):
     await state.clear()
-    await dialog_manager.start(state=CreatePromotion.get_name, mode=StartMode.RESET_STACK)
+    await dialog_manager.start(state=Menu.menu, mode=StartMode.RESET_STACK)
