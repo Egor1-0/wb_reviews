@@ -5,3 +5,4 @@ from .base import BaseConfig
 
 class BotConfig(BaseConfig):
     TOKEN: SecretStr
+    ADMINISTRATION: int
