@@ -10,19 +10,24 @@ start_menu = InlineKeyboardMarkup(inline_keyboard=[
 )
 
 
-def get_accept_reject_first_stage_keyboard(user_id: int) -> InlineKeyboardMarkup:
+def get_accept_reject_first_stage_keyboard(user_id: int, promotion_id: int) -> InlineKeyboardMarkup:
     kb = InlineKeyboardBuilder()
-    kb.button(text='Принять', callback_data=AcceptRejectFirstStageCallbackData(accept=True, user_id=user_id))
-    kb.button(text='Отказать', callback_data=AcceptRejectFirstStageCallbackData(accept=False, user_id=user_id))
+    kb.button(text='Принять',
+              callback_data=AcceptRejectFirstStageCallbackData(accept=True, user_id=user_id, promotion_id=promotion_id))
+    kb.button(text='Отказать', callback_data=AcceptRejectFirstStageCallbackData(accept=False, user_id=user_id,
+                                                                                promotion_id=promotion_id))
     kb.adjust(1)
 
     return kb.as_markup(resize_keyboard=True)
 
 
-def get_accept_reject_second_stage_keyboard(user_id: int):
+def get_accept_reject_second_stage_keyboard(user_id: int, promotion_id: int):
     kb = InlineKeyboardBuilder()
-    kb.button(text='Подтвердить перевод', callback_data=AcceptRejectSecondStageCallbackData(accept=True, user_id=user_id))
-    kb.button(text='Отказать', callback_data=AcceptRejectSecondStageCallbackData(accept=False, user_id=user_id))
+    kb.button(text='Подтвердить перевод',
+              callback_data=AcceptRejectSecondStageCallbackData(accept=True, user_id=user_id,
+                                                                promotion_id=promotion_id))
+    kb.button(text='Отказать', callback_data=AcceptRejectSecondStageCallbackData(accept=False, user_id=user_id,
+                                                                                 promotion_id=promotion_id))
     kb.adjust(1)
 
     return kb.as_markup(resize_keyboard=True)

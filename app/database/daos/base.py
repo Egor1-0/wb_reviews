@@ -1,3 +1,4 @@
+import logging
 from typing import Type, TypeVar
 
 from pydantic import BaseModel
@@ -41,13 +42,12 @@ class BaseDao:
             filters = filters.model_dump(exclude_unset=True)
         if not isinstance(values, dict):
             values = values.model_dump(exclude_unset=True)
-
-        query = update(cls.model).filter_by(**filters).values(**values).returning()
-        res = await session.execute(query)
-
-        return res.scalar()
+        query = update(cls.model).filter_by(**filters).values(**values)
+        await session.execute(query)
+        await session.commit()
 
     @classmethod
     async def delete_by_id(cls, session: AsyncSession, model_id: int) -> None:
         query = delete(cls.model).where(cls.model.id == model_id)
         await session.execute(query)
+        await session.commit()

@@ -4,13 +4,21 @@ from aiogram_dialog.widgets.input import MessageInput
 from aiogram_dialog.widgets.kbd import Button
 
 from config import config
-from database.daos import PromotionDao
+from database.daos import PromotionDao, ParticipationDao
+from database.schemas.participation import CreateParticipation
+from database.schemas.status import Status
 from keyboards.admin import get_accept_reject_first_stage_keyboard
 from states.user import FirstStage
 
 
 async def save_promotion_id(callback: CallbackQuery, button: Button, dialog_manager: DialogManager, data: str):
     dialog_manager.dialog_data['promotion_id'] = data
+    create_promotion = CreateParticipation(
+        user_id=callback.from_user.id,
+        promotion_id=int(data),
+        status=Status.FIRST_STAGE
+    )
+    await ParticipationDao.create(dialog_manager.middleware_data['session'], create_promotion)
     await dialog_manager.switch_to(FirstStage.find_by_keywords)
 
 
@@ -58,7 +66,7 @@ async def save_like_shop_and_product_photo(message: Message, widget: MessageInpu
                                                ],
                                                )
     await message.bot.send_message(config.bot.ADMINISTRATION, text=text,
-                                   reply_markup=get_accept_reject_first_stage_keyboard(message.from_user.id),
+                                   reply_markup=get_accept_reject_first_stage_keyboard(message.from_user.id, promotion.id),
                                    reply_to_message_id=group[0].message_id)
     await message.answer(
         'Данные предоставлены модерации. Если все в порядке - вам придет уведомление, что можете создавать заказ')

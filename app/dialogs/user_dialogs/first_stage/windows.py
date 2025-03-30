@@ -33,7 +33,7 @@ select_promotion = Window(
         select_widget,
         when=F['promotions'].len() <= 7
     ),
-    Cancel(text=Const('Отмена')),
+    Cancel(text=Const('Отменайцукйцукй')),
     getter=get_promotions,
     state=FirstStage.select_promotion
 )
