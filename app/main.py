@@ -5,6 +5,7 @@ from aiogram import Dispatcher, Bot
 from aiogram.client.default import DefaultBotProperties
 from aiogram.fsm.storage.redis import DefaultKeyBuilder, RedisStorage
 from aiogram.enums.parse_mode import ParseMode
+from aiogram.utils.callback_answer import CallbackAnswerMiddleware
 from aiogram_dialog import setup_dialogs
 from redis.asyncio.client import Redis
 
@@ -30,6 +31,7 @@ async def main():
 
     dp.include_routers(handlers.router, dialogs.router)
     dp.update.middleware(DependenciesMiddleware(sessionmaker=async_sessionmaker))
+    dp.callback_query.middleware(CallbackAnswerMiddleware(pre=False))
 
     await bot.delete_webhook(drop_pending_updates=True)
 

@@ -1,4 +1,5 @@
 from aiogram import F
+from aiogram.enums import ContentType
 from aiogram_dialog import Window
 from aiogram_dialog.widgets.input import MessageInput
 from aiogram_dialog.widgets.kbd import ScrollingGroup, Select, Column, Cancel, Back
@@ -41,7 +42,7 @@ find_by_keywords = Window(
     Format('Отправьте скриншот, на котором видно, что вы нашли товар по ключевым словам: "{promotion.keywords}"'),
     MessageInput(
         func=save_find_by_keywords_photo,
-        filter=F.photo
+        content_types=[ContentType.PHOTO]
     ),
     Back(text=Const('Назад')),
     Cancel(text=Const('Отмена')),
@@ -53,7 +54,7 @@ basket_with_competitors = Window(
     Const('Отправьте скриншот, на котором виден наш товар и товар конкурентов в корзине'),
     MessageInput(
         func=save_basket_with_competitors_photo,
-        filter=F.photo
+        content_types=[ContentType.PHOTO]
     ),
     Back(text=Const('Назад')),
     Cancel(text=Const('Отмена')),
@@ -64,7 +65,7 @@ basket_without_competitors = Window(
     Const('Отправьте скриншот, сделанный через 5 минут, где вы удалили товары конкурентов из корзины'),
     MessageInput(
         func=save_basket_without_competitors_photo,
-        filter=F.photo
+        content_types=[ContentType.PHOTO]
     ),
     Back(text=Const('Назад')),
     Cancel(text=Const('Отмена')),
@@ -75,7 +76,7 @@ order_with_address = Window(
     Const('Отправьте скриншот, где виден заказ с адресом ПВЗ'),
     MessageInput(
         func=save_order_with_address_photo,
-        filter=F.photo
+        content_types=[ContentType.PHOTO]
     ),
     Back(text=Const('Назад')),
     Cancel(text=Const('Отмена')),
@@ -86,7 +87,7 @@ like_shop_and_product = Window(
     Const('Отправьте скриншот, где видно, что вы поставили лайк товару и магазину'),
     MessageInput(
         func=save_like_shop_and_product_photo,
-        filter=F.photo
+        content_types=[ContentType.PHOTO]
     ),
     Back(text=Const('Назад')),
     Cancel(text=Const('Отмена')),
