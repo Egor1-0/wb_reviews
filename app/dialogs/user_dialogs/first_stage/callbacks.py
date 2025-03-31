@@ -53,7 +53,7 @@ async def save_like_shop_and_product_photo(message: Message, widget: MessageInpu
                                               int(dialog_manager.dialog_data['promotion_id']))
 
     text = (f'Юзер: {'@' + message.from_user.username + f' ({message.from_user.id})' 
-            if message.from_user.id else message.from_user.id} хочет участвовать в акции по товару {promotion.name}. '
+            if message.from_user.username else message.from_user.id} хочет участвовать в акции по товару {promotion.name}. '
             f'Проверьте, все ли в порядке со скришотами')
 
     group = await message.bot.send_media_group(chat_id=config.bot.ADMINISTRATION,

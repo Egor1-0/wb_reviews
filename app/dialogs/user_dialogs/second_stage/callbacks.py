@@ -55,13 +55,13 @@ async def save_details_for_transfer(message: Message, widget: ManagedTextInput, 
     article = dialog_manager.dialog_data['article']
     nickname = dialog_manager.dialog_data['nickname']
     phone_number = dialog_manager.dialog_data['phone_number']
-    promotion_id = 67 or int(dialog_manager.start_data['promotion_id'])
+    promotion_id = int(dialog_manager.start_data['promotion_id'])
 
     promotion = await PromotionDao.find_by_id(dialog_manager.middleware_data['session'],
                                               promotion_id)
 
     text = (f'Юзер: {'@' + message.from_user.username + f' ({message.from_user.id})'
-    if message.from_user.id else message.from_user.id} прошел второй этап по акции {promotion.name}. '
+    if message.from_user.username else message.from_user.id} прошел второй этап по акции {promotion.name}. '
             f'Проверьте, все ли в порядке с данными и переведите кешбэк пользователю. \nДанные:\n'
             f'Артикул товара: {article}\nИмя пользователя на WB: {nickname}\nНомер телефона пользователя: '
             f'{phone_number}\nРеквизиты пользователя для перевода: {details_for_transfer}')
@@ -83,10 +83,11 @@ async def save_details_for_transfer(message: Message, widget: ManagedTextInput, 
     group = await message.bot.send_media_group(chat_id=config.bot.ADMINISTRATION, media=[*media])
 
     await message.bot.send_message(config.bot.ADMINISTRATION, text=text,
-                                   reply_markup=get_accept_reject_second_stage_keyboard(message.from_user.id),
+                                   reply_markup=get_accept_reject_second_stage_keyboard(message.from_user.id, promotion_id),
                                    reply_to_message_id=group[0].message_id)
 
     await message.answer('Данные предоставлены модерации. Если все в порядке - вам придет уведомление, что '
                          'кешбэк переведен на указанные реквизиты')
-    os.remove(f'{animation_review_id}.mp4')
+    if animation_review_id:
+        os.remove(f'{animation_review_id}.mp4')
     await dialog_manager.done()

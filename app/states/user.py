@@ -17,3 +17,10 @@ class SecondStage(StatesGroup):
     nickname = State()
     phone_number = State()
     details_for_transfer = State()
+
+
+class UserMenu(StatesGroup):
+    menu = State()
+
+class GetUserStatistics(StatesGroup):
+    get_statistics = State()

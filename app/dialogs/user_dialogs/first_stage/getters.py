@@ -10,6 +10,10 @@ async def get_promotions(dialog_manager: DialogManager, **kwargs):
 
 
 async def get_selected_promotion(dialog_manager: DialogManager, **kwargs):
+    promotion_id = dialog_manager.dialog_data.get('promotion_id')
+    if not promotion_id:
+        promotion_id = dialog_manager.start_data['promotion_id']
+        dialog_manager.dialog_data['promotion_id'] = dialog_manager.start_data['promotion_id']
     promotion = await PromotionDao.find_by_id(dialog_manager.middleware_data['session'],
-                                              int(dialog_manager.dialog_data['promotion_id']))
+                                              int(promotion_id))
     return {'promotion': promotion}
