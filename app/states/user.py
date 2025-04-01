@@ -3,6 +3,7 @@ from aiogram.fsm.state import StatesGroup, State
 
 class FirstStage(StatesGroup):
     select_promotion = State()
+    warning_message = State()
     find_by_keywords = State()
     basket_with_competitors = State()
     basket_without_competitors = State()

@@ -33,7 +33,7 @@ async def save_promotion_id(callback: CallbackQuery, button: Button, dialog_mana
         status=Status.FIRST_STAGE
     )
     await ParticipationDao.create(dialog_manager.middleware_data['session'], create_promotion)
-    await dialog_manager.switch_to(FirstStage.find_by_keywords)
+    await dialog_manager.next()
 
 
 async def save_find_by_keywords_photo(message: Message, widget: MessageInput, dialog_manager: DialogManager):

@@ -2,7 +2,7 @@ from aiogram import F
 from aiogram.enums import ContentType
 from aiogram_dialog import Window
 from aiogram_dialog.widgets.input import MessageInput
-from aiogram_dialog.widgets.kbd import ScrollingGroup, Select, Column, Cancel, Back
+from aiogram_dialog.widgets.kbd import ScrollingGroup, Select, Column, Cancel, Back, Next
 from aiogram_dialog.widgets.text import Const, Format
 
 from dialogs.user_dialogs.first_stage.callbacks import save_promotion_id, save_find_by_keywords_photo, \
@@ -38,6 +38,31 @@ select_promotion = Window(
     state=FirstStage.select_promotion
 )
 
+warning_message = Window(
+    Format('Обязательные условия: ⬇\n\n'
+           '‼отзывы оставлять в графе: «поделитесь впечатлениями»\n\n'
+           '1. Найти товар по ключевой фразе: \n'
+           '{promotion.keywords}\n\n'
+           '2. Добавить товар в корзину, и пару товаров конкурентов;\n\n'
+           '3.Через 3-5 минут, товар конкурентов удалить из корзины;\n\n'
+           '5. Заказать наш товар. Прислать скриншот заказа, где виден ПВЗ '
+           '(из раздела «Доставки» в личном кабинете Wildberries);\n\n'
+           '6. Добавить магазин и товар в избранное (т.е. поставить лайк);\n\n'
+           '7. Выкупить товар, т.е. забрать с ПВЗ (без возврата!);\n\n'
+           '8. ❌Товар не возвращать!❌ Прислать видео как вы разрезаете 2 штрихкода (ШК от ВБ и ШК поставщика видео '
+           'товара с открытой крышкой фото 📸 от 1 до 3шт со вскрытой упаковкой;);\n\n'
+           '9. В течение 2х недель после получения товара сообщу день когда написать отзыв  '
+           '(сообщить о получении мне согласуем дату).\n\n'
+           'Когда написать сам отзыв, я вам сообщу дополнительно) ⭐⭐⭐⭐⭐ (если нужен будет текст отзыва, '
+           'сообщите, я вам пришлю)\n\n'
+           '10. Прислать скриншот отзыва, далее лайкнуть чужой отзыв с 5🌟;\n\n'
+           '11. Выплаты будем делать через день после публикации отзыва в карточке товара!'),
+    Next(text=Const('Продолжить')),
+    Back(text=Const('Назад')),
+    Cancel(text=Const('Отмена')),
+    getter=get_selected_promotion,
+    state=FirstStage.warning_message
+)
 find_by_keywords = Window(
     Format('Отправьте скриншот, на котором видно, что вы нашли товар по ключевым словам: "{promotion.keywords}"'),
     MessageInput(
