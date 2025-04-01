@@ -12,6 +12,20 @@ from states.user import FirstStage
 
 
 async def save_promotion_id(callback: CallbackQuery, button: Button, dialog_manager: DialogManager, data: str):
+    participation = await ParticipationDao.find_one_by_filters(dialog_manager.middleware_data['session'],
+                                                               {'user_id': callback.from_user.id,
+                                                                'promotion_id': int(data)})
+    if participation:
+        match participation.status:
+            case Status.CANCELED:
+                text = 'Ваша заявка на данную акцию отменена администрацией. Выберите другую акцию'
+            case Status.COMPLETED:
+                text = 'Учавствовать в акции можно только один раз. Выберите другую акцию'
+            case _:
+                text = ('Вы уже участвуете в этой акции. Вы можете посмотреть список ваших акций '
+                        'в главном меню > Мои активные акции')
+        await callback.answer(text, show_alert=True)
+        return
     dialog_manager.dialog_data['promotion_id'] = data
     create_promotion = CreateParticipation(
         user_id=callback.from_user.id,
@@ -52,8 +66,8 @@ async def save_like_shop_and_product_photo(message: Message, widget: MessageInpu
     promotion = await PromotionDao.find_by_id(dialog_manager.middleware_data['session'],
                                               int(dialog_manager.dialog_data['promotion_id']))
 
-    text = (f'Юзер: {'@' + message.from_user.username + f' ({message.from_user.id})' 
-            if message.from_user.username else message.from_user.id} хочет участвовать в акции по товару {promotion.name}. '
+    text = (f'Юзер: {'@' + message.from_user.username + f' ({message.from_user.id})'
+    if message.from_user.username else message.from_user.id} хочет участвовать в акции по товару {promotion.name}. '
             f'Проверьте, все ли в порядке со скришотами')
 
     group = await message.bot.send_media_group(chat_id=config.bot.ADMINISTRATION,
@@ -66,7 +80,8 @@ async def save_like_shop_and_product_photo(message: Message, widget: MessageInpu
                                                ],
                                                )
     await message.bot.send_message(config.bot.ADMINISTRATION, text=text,
-                                   reply_markup=get_accept_reject_first_stage_keyboard(message.from_user.id, promotion.id),
+                                   reply_markup=get_accept_reject_first_stage_keyboard(message.from_user.id,
+                                                                                       promotion.id),
                                    reply_to_message_id=group[0].message_id)
     await message.answer(
         'Данные предоставлены модерации. Если все в порядке - вам придет уведомление, что можете создавать заказ')

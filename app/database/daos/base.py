@@ -30,6 +30,24 @@ class BaseDao:
         return res.scalar()
 
     @classmethod
+    async def find_all_by_filters(cls, session: AsyncSession, filters: dict | BaseModel) -> list[Type[ModelType]]:
+        if not isinstance(filters, dict):
+            filters = filters.model_dump(exclude_unset=True)
+        query = select(cls.model).filter_by(**filters)
+        res = await session.execute(query)
+
+        return res.scalars().all()
+
+    @classmethod
+    async def find_one_by_filters(cls, session: AsyncSession, filters: dict | BaseModel) -> Type[ModelType]:
+        if not isinstance(filters, dict):
+            filters = filters.model_dump(exclude_unset=True)
+        query = select(cls.model).filter_by(**filters)
+        res = await session.execute(query)
+
+        return res.scalar()
+
+    @classmethod
     async def find_all(cls, session: AsyncSession) -> list[Type[ModelType]]:
         query = select(cls.model)
         res = await session.execute(query)

@@ -5,6 +5,7 @@ from aiogram.types import Message, CallbackQuery
 from aiogram_dialog import DialogManager, StartMode
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from config import config
 from database.daos import ParticipationDao, PromotionDao
 from database.schemas.status import Status
 from keyboards.datas import AcceptRejectFirstStageCallbackData, AcceptRejectSecondStageCallbackData
@@ -13,7 +14,8 @@ from states.admin import Menu
 
 router = Router()
 
-# todo проверка что админ
+router.message.filter(F.from_user.id == config.bot.ADMINISTRATION)
+router.callback_query.filter(F.from_user.id == config.bot.ADMINISTRATION)
 
 @router.message(Command('admin'))
 async def main_admin_menu_handler(message: Message, state: FSMContext, dialog_manager: DialogManager):
@@ -28,7 +30,7 @@ async def main_admin_menu_handler(message: Message, state: FSMContext, dialog_ma
 async def accept_first_stage(callback: CallbackQuery, callback_data: AcceptRejectFirstStageCallbackData, bot: Bot):
     await bot.send_message(callback_data.user_id, 'Вам одобрена заявка. Вы готовы приступить ко второму шагу?',
                            reply_markup=start_second_stage(callback_data.promotion_id))
-    await callback.answer('Уведомление отправлено пользователю')
+    await callback.message.answer('Уведомление отправлено пользователю')
     await callback.message.delete_reply_markup()
 
 
@@ -39,7 +41,7 @@ async def reject_first_stage(callback: CallbackQuery, callback_data: AcceptRejec
     await bot.send_message(callback_data.user_id, f'Вам отказано участие в акции {promotion.name}')
     await ParticipationDao.update(session, {'user_id': callback_data.user_id, 'promotion_id': callback_data.promotion_id},
                                   {'status': Status.CANCELED})
-    await callback.answer('Уведомление отправлено пользователю')
+    await callback.message.answer('Уведомление отправлено пользователю')
     await callback.message.delete_reply_markup()
 
 
@@ -50,10 +52,11 @@ async def reject_first_stage(callback: CallbackQuery, callback_data: AcceptRejec
 async def accept_second_stage(callback: CallbackQuery, callback_data: AcceptRejectSecondStageCallbackData, bot: Bot,
                              session: AsyncSession):
     promotion = await PromotionDao.find_by_id(session, callback_data.promotion_id)
+    await PromotionDao.update(session, {'id': promotion.id}, {'count': promotion.count - 1})
     await bot.send_message(callback_data.user_id, f'Вам перевели кешбэк за товар {promotion.name} по указанным реквизитам')
     await ParticipationDao.update(session, {'user_id': callback_data.user_id, 'promotion_id': callback_data.promotion_id},
                                   {'status': Status.COMPLETED})
-    await callback.answer('Уведомление отправлено пользователю')
+    await callback.message.answer('Уведомление отправлено пользователю')
     await callback.message.delete_reply_markup()
 
 
@@ -64,5 +67,5 @@ async def reject_second_stage(callback: CallbackQuery, callback_data: AcceptReje
     await bot.send_message(callback_data.user_id, f'Вам отказано участие в акции {promotion.name}')
     await ParticipationDao.update(session, {'user_id': callback_data.user_id, 'promotion_id': callback_data.promotion_id},
                                   {'status': Status.CANCELED})
-    await callback.answer('Уведомление отправлено пользователю')
+    await callback.message.answer('Уведомление отправлено пользователю')
     await callback.message.delete_reply_markup()

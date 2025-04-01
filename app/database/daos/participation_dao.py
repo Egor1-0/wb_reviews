@@ -14,7 +14,7 @@ class ParticipationDao(BaseDao):
     model = Participation
 
     @classmethod
-    async def find_active_promotions(cls, session: AsyncSession, user_id: int) -> list[Type[ModelType]]:
+    async def find_active_participations(cls, session: AsyncSession, user_id: int) -> list[Type[ModelType]]:
         query = (select(cls.model).where(cls.model.user_id == user_id,
                                          cls.model.status.in_([Status.FIRST_STAGE, Status.SECOND_STAGE]))
                  .options(joinedload(cls.model.promotion)))

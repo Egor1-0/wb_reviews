@@ -4,4 +4,4 @@ from config import config
 
 engine = create_async_engine(config.database.create_url())
 
-async_sessionmaker = async_sessionmaker_(engine)
+async_sessionmaker = async_sessionmaker_(engine, expire_on_commit=False)
