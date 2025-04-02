@@ -1,10 +1,11 @@
 from aiogram import F
 from aiogram_dialog import Window
-from aiogram_dialog.widgets.kbd import Cancel, ScrollingGroup, Multiselect, Select, Column
+from aiogram_dialog.widgets.kbd import Cancel, ScrollingGroup, Select, Column
+from aiogram_dialog.widgets.media import DynamicMedia
 from aiogram_dialog.widgets.text import Const, Case, Format
 
-from dialogs.admin_dialogs.get_statistics.callbacks import save_promotion_id
-from dialogs.admin_dialogs.get_statistics.getters import get_promotions
+from dialogs.admin_dialogs.get_statistics.callbacks import save_statistics_by_promotion_id
+from dialogs.admin_dialogs.get_statistics.getters import get_promotions, get_path_file
 from states.admin import GetStatistics
 
 select_widget = Select(
@@ -12,7 +13,7 @@ select_widget = Select(
     id="select_promotion",
     item_id_getter=lambda item: item.id,
     items="promotions",
-    on_click=save_promotion_id,
+    on_click=save_statistics_by_promotion_id,
     when='exists'
 )
 
@@ -42,7 +43,9 @@ select_promotion_to_get_statistics = Window(
 )
 
 get_statistics_promotion = Window(
+    DynamicMedia('file'),
     Format('Статистика отправлена'),
     Cancel(text=Const('В меню')),
+    getter=get_path_file,
     state=GetStatistics.get_statistics
 )

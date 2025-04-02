@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from aiogram import Router, F, Bot
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
@@ -55,7 +57,7 @@ async def accept_second_stage(callback: CallbackQuery, callback_data: AcceptReje
     await PromotionDao.update(session, {'id': promotion.id}, {'count': promotion.count - 1})
     await bot.send_message(callback_data.user_id, f'Вам перевели кешбэк за товар {promotion.name} по указанным реквизитам')
     await ParticipationDao.update(session, {'user_id': callback_data.user_id, 'promotion_id': callback_data.promotion_id},
-                                  {'status': Status.COMPLETED})
+                                  {'status': Status.COMPLETED, "ended_at": datetime.now()})
     await callback.message.answer('Уведомление отправлено пользователю')
     await callback.message.delete_reply_markup()
 
