@@ -12,6 +12,7 @@ from redis.asyncio.client import Redis
 import handlers
 import dialogs
 from database.core import async_sessionmaker
+from fix_dialogs.media_storage import MediaIdStorage
 from middlewares.dependencies import DependenciesMiddleware
 from utils.setup_logging import setup_logging
 from config import config
@@ -35,7 +36,7 @@ async def main():
 
     await bot.delete_webhook(drop_pending_updates=True)
 
-    setup_dialogs(dp)  # настройка диалогов
+    setup_dialogs(dp, media_id_storage=MediaIdStorage())  # настройка диалогов
     await dp.start_polling(bot)
 
 

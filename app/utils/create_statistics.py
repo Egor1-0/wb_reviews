@@ -1,3 +1,5 @@
+import logging
+
 import pandas as pd
 
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -25,6 +27,7 @@ async def create_statistics_by_promotion_id(session: AsyncSession, promotion_id:
     start = []
     end = []
     for k, v in data.items():
+        logging.info('date: %s  %d   %d', k ,v.start, v.end)
         date.append(k)
         start.append(v.start)
         end.append(v.end)
