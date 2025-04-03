@@ -15,7 +15,6 @@ class SecondStage(StatesGroup):
     photo_or_video_review = State()
     article = State()
     nickname = State()
-    phone_number = State()
     details_for_transfer = State()
 
 

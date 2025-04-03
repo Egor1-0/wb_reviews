@@ -14,6 +14,7 @@ import dialogs
 from database.core import async_sessionmaker
 from fix_dialogs.media_storage import MediaIdStorage
 from middlewares.dependencies import DependenciesMiddleware
+from middlewares.update_user import UpdateUser
 from utils.setup_logging import setup_logging
 from config import config
 
@@ -31,7 +32,9 @@ async def main():
     dp = Dispatcher(storage=storage)
 
     dp.include_routers(handlers.router, dialogs.router)
+
     dp.update.middleware(DependenciesMiddleware(sessionmaker=async_sessionmaker))
+    dp.update.middleware(UpdateUser(sessionmaker=async_sessionmaker))
     dp.callback_query.middleware(CallbackAnswerMiddleware(pre=False))
 
     await bot.delete_webhook(drop_pending_updates=True)

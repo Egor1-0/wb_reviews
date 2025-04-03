@@ -33,6 +33,7 @@ class ParticipationDao(BaseDao):
         query = (
             select(Participation)
             .order_by(Participation.created_at)
-            .options(joinedload(Participation.promotion)))
+            .options(joinedload(Participation.promotion),
+                     joinedload(Participation.user)))
         result = await session.execute(query)
         return result.scalars().all()

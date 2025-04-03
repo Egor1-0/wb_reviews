@@ -13,10 +13,10 @@ class Participation(Base):
     promotion_id: Mapped[int] = mapped_column(ForeignKey('promotions.id'))
     user_id: Mapped[int] = mapped_column(ForeignKey('users.id'))
     status: Mapped[Status] = mapped_column(default=Status.FIRST_STAGE)
-    phone_number: Mapped[str] = mapped_column(nullable=True)
     wb_nickname: Mapped[str] = mapped_column(nullable=True)
     details_for_transfer: Mapped[str] = mapped_column(nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=func.now())
     ended_at: Mapped[datetime | None]
 
     promotion: Mapped['Promotion'] = relationship(back_populates='participations', foreign_keys=[promotion_id])
+    user: Mapped['User'] = relationship(back_populates='participations', foreign_keys=[user_id])

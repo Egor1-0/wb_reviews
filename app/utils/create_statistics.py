@@ -1,8 +1,4 @@
-import csv
-from io import StringIO
-from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import joinedload
 import pandas as pd
 
 from database.daos import ParticipationDao
@@ -15,6 +11,10 @@ async def create_statistics_csv(session: AsyncSession):
 
     data = []
     for p in participations:
+        username = 'Отсутствует'
+        if p.user.username:
+            username = '@' + p.user.username
+
         status = None
         match p.status.value:
             case Status.FIRST_STAGE:
@@ -28,12 +28,10 @@ async def create_statistics_csv(session: AsyncSession):
 
         data.append({
             "Дата": p.created_at.strftime('%Y-%m-%d %H:%M:%S'),
-            "Номер акции": p.promotion_id,
             "Название акции": p.promotion.name,
-            "Колво оставшихся квот": p.promotion.count,  # или другая логика для квот
-            "Тг-айди пользователя": p.user_id,
+            "Колво оставшихся квот": p.promotion.count,
+            "Юзернейм": username,
             "Ник на вб": p.wb_nickname,
-            "Номер телефона": p.phone_number,
             "Реквизиты для перевода": p.details_for_transfer,
             "Статус": status
         })
@@ -42,4 +40,3 @@ async def create_statistics_csv(session: AsyncSession):
     df = pd.DataFrame(data)
 
     df.to_csv('statistics.csv', index=False, encoding='utf-8-sig')
-
