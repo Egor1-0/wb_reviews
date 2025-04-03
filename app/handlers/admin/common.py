@@ -33,7 +33,7 @@ async def main_admin_menu_handler(message: Message, state: FSMContext, dialog_ma
 async def accept_first_stage(callback: CallbackQuery, callback_data: AcceptRejectFirstStageCallbackData,
                              bot: Bot, session: AsyncSession):
     await ParticipationDao.update(session,
-                                  {'user_id': callback.from_user.id, 'promotion_id': callback_data.promotion_id},
+                                  {'user_id': callback_data.user_id, 'promotion_id': callback_data.promotion_id},
                                   {'status': Status.SECOND_STAGE})
     await bot.send_message(callback_data.user_id, 'Вам одобрена заявка. Вы готовы приступить ко второму шагу?',
                            reply_markup=start_second_stage(callback_data.promotion_id))

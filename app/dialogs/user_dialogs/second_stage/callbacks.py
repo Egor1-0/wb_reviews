@@ -10,7 +10,7 @@ from aiogram_dialog.widgets.input import MessageInput, ManagedTextInput
 from aiogram_dialog.widgets.kbd import Button
 
 from config import config
-from database.daos import PromotionDao
+from database.daos import PromotionDao, ParticipationDao
 from keyboards.admin import get_accept_reject_first_stage_keyboard, get_accept_reject_second_stage_keyboard
 from states.user import FirstStage
 
@@ -46,7 +46,8 @@ async def save_phone_number(message: Message, widget: ManagedTextInput, dialog_m
     await dialog_manager.next()
 
 
-async def save_details_for_transfer(message: Message, widget: ManagedTextInput, dialog_manager: DialogManager, data: str):
+async def save_details_for_transfer(message: Message, widget: ManagedTextInput, dialog_manager: DialogManager,
+                                    data: str):
     details_for_transfer = message.text
     photo_review_id = dialog_manager.dialog_data.get('photo_review_id')
     video_review_id = dialog_manager.dialog_data.get('video_review_id')
@@ -59,6 +60,10 @@ async def save_details_for_transfer(message: Message, widget: ManagedTextInput, 
 
     promotion = await PromotionDao.find_by_id(dialog_manager.middleware_data['session'],
                                               promotion_id)
+    await ParticipationDao.update(dialog_manager.middleware_data['session'],
+                                  {'user_id': message.from_user.id, 'promotion_id': promotion_id},
+                                  {'phone_number': phone_number, 'wb_nickname': nickname,
+                                   'details_for_transfer': details_for_transfer})
 
     text = (f'Юзер: {'@' + message.from_user.username + f' ({message.from_user.id})'
     if message.from_user.username else message.from_user.id} прошел второй этап по акции {promotion.name}. '
@@ -83,7 +88,8 @@ async def save_details_for_transfer(message: Message, widget: ManagedTextInput, 
     group = await message.bot.send_media_group(chat_id=config.bot.ADMINISTRATION, media=[*media])
 
     await message.bot.send_message(config.bot.ADMINISTRATION, text=text,
-                                   reply_markup=get_accept_reject_second_stage_keyboard(message.from_user.id, promotion_id),
+                                   reply_markup=get_accept_reject_second_stage_keyboard(message.from_user.id,
+                                                                                        promotion_id),
                                    reply_to_message_id=group[0].message_id)
 
     await message.answer('Данные предоставлены модерации. Если все в порядке - вам придет уведомление, что '
