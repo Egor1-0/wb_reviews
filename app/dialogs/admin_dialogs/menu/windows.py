@@ -2,7 +2,7 @@ from aiogram_dialog import Window
 from aiogram_dialog.widgets.kbd import Start
 from aiogram_dialog.widgets.text import Const
 
-from states.admin import CreatePromotion, Menu, GetStatistics
+from states.admin import CreatePromotion, Menu, GetStatistics, UpdateText
 
 main_menu = Window(
     Const('Выберите пункт меню'),
@@ -12,5 +12,8 @@ main_menu = Window(
     Start(text=Const('Получить статистику по акции'),
           id='get_stats',
           state=GetStatistics.select_promotion),
+    Start(text=Const('Обновить стартовый текст'),
+          id='upd_text',
+          state=UpdateText.get_text),
     state=Menu.menu
 )

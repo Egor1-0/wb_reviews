@@ -1,6 +1,6 @@
 from aiogram import Router
 
-from . import create_promotion, menu, get_statistics
+from . import create_promotion, menu, get_statistics, update_texts
 from config import config
 
 router = Router()
@@ -10,5 +10,6 @@ router.callback_query.filter(lambda x: x.from_user.id == config.bot.ADMINISTRATI
 router.include_routers(
     create_promotion.router,
     menu.router,
-    get_statistics.router
+    get_statistics.router,
+    update_texts.router
 )
