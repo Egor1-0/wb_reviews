@@ -1,41 +1,45 @@
-import logging
-
+import csv
+from io import StringIO
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import joinedload
 import pandas as pd
 
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from database.daos import ParticipationDao
-from database.schemas.statistics import Statistics
+from database.models import Participation
+from database.schemas.status import Status
 
 
-async def create_statistics_by_promotion_id(session: AsyncSession, promotion_id: int):
-    res_create, res_end = await ParticipationDao.get_statistics(session, promotion_id)
-    data = dict()
+async def create_statistics_csv(session: AsyncSession):
+    participations = await ParticipationDao.get_statistics(session)
 
-    for date in res_create:
-        data[date[0]] = Statistics(start=date[1])
+    data = []
+    for p in participations:
+        status = None
+        match p.status.value:
+            case Status.FIRST_STAGE:
+                status = 'Первый этап'
+            case Status.SECOND_STAGE:
+                status = 'Второй этап'
+            case Status.COMPLETED:
+                status = 'Завершено'
+            case Status.CANCELED:
+                status = 'Отклонено'
 
-    for date in res_end:
-        if data.get(date[0]):
-            data[date[0]].end = date[1]
-        else:
-            data[date[0]] = Statistics(end=date[1])
+        data.append({
+            "Дата": p.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+            "Номер акции": p.promotion_id,
+            "Название акции": p.promotion.name,
+            "Колво оставшихся квот": p.promotion.count,  # или другая логика для квот
+            "Тг-айди пользователя": p.user_id,
+            "Ник на вб": p.wb_nickname,
+            "Номер телефона": p.phone_number,
+            "Реквизиты для перевода": p.details_for_transfer,
+            "Статус": status
+        })
 
-
-
-    date = []
-    start = []
-    end = []
-    for k, v in data.items():
-        date.append(k)
-        start.append(v.start)
-        end.append(v.end)
-
-    data = {
-        "Дата": date,
-        "Начали участие": start,
-        "Завершили участие": end
-    }
-
+    # Создаем DataFrame
     df = pd.DataFrame(data)
-    df.to_csv(f"statistics_{promotion_id}.csv", index=False, encoding='utf-8')
+
+    df.to_csv('statistics.csv', index=False, encoding='utf-8-sig')
+

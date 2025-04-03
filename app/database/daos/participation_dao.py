@@ -4,6 +4,7 @@ from typing import Type, Any
 from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload
+from sqlalchemy.util import await_only
 
 from database.daos.base import BaseDao, ModelType
 from database.models import Participation, Promotion
@@ -28,27 +29,10 @@ class ParticipationDao(BaseDao):
         return res.scalar()
 
     @classmethod
-    async def get_statistics(cls, session: AsyncSession, promotion_id: int) -> Any:
-        query_create = (
-            select(
-                func.date(Participation.created_at),
-                func.count(Participation.id)
-            )
-            .where(Participation.promotion_id == promotion_id)
-            .group_by(func.date(Participation.created_at))
-            .order_by(func.date(Participation.created_at))
-        )
-
-        query_end = (
-            select(
-                func.date(Participation.ended_at),
-                func.count(Participation.id)
-            )
-            .where(Participation.promotion_id == promotion_id)
-            .group_by(func.date(Participation.ended_at))
-            .order_by(func.date(Participation.ended_at))
-        )
-
-        res_create = (await session.execute(query_create)).all()
-        res_end = (await session.execute(query_end)).all()
-        return res_create, res_end
+    async def get_statistics(cls, session: AsyncSession) -> Any:
+        query = (
+            select(Participation)
+            .order_by(Participation.created_at)
+            .options(joinedload(Participation.promotion)))
+        result = await session.execute(query)
+        return result.scalars().all()

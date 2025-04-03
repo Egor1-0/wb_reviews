@@ -13,7 +13,6 @@ class CreatePromotion(StatesGroup):
 
 
 class GetStatistics(StatesGroup):
-    select_promotion = State()
     get_statistics = State()
 
 
