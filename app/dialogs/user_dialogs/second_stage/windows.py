@@ -1,11 +1,10 @@
-from aiogram import F
 from aiogram.enums import ContentType
 from aiogram_dialog import Window
 from aiogram_dialog.widgets.input import MessageInput, TextInput
 from aiogram_dialog.widgets.kbd import Back
-from aiogram_dialog.widgets.text import Const, Format
+from aiogram_dialog.widgets.text import Const
 
-from dialogs.user_dialogs.second_stage.callbacks import save_photo_and_video_review, save_screenshot_review, \
+from dialogs.user_dialogs.second_stage.callbacks import save_photo_and_video_review, \
     save_article, save_nickname, save_phone_number, save_details_for_transfer
 from states.user import SecondStage
 
@@ -16,16 +15,6 @@ photo_or_video_review = Window(
         content_types=[ContentType.PHOTO, ContentType.VIDEO, ContentType.ANIMATION]
     ),
     state=SecondStage.photo_or_video_review
-)
-
-screenshot_review = Window(
-    Const('Отправьте скриншот, на котором виден ваш отзыв на товар'),
-    MessageInput(
-        func=save_screenshot_review,
-        content_types=[ContentType.PHOTO]
-    ),
-    Back(text=Const('Назад')),
-    state=SecondStage.screenshot_review
 )
 
 article = Window(

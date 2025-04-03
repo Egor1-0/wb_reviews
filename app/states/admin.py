@@ -8,6 +8,7 @@ class Menu(StatesGroup):
 class CreatePromotion(StatesGroup):
     get_name = State()
     get_keywords = State()
+    get_photo = State()
     get_count = State()
 
 

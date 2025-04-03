@@ -13,7 +13,6 @@ class FirstStage(StatesGroup):
 
 class SecondStage(StatesGroup):
     photo_or_video_review = State()
-    screenshot_review = State()
     article = State()
     nickname = State()
     phone_number = State()

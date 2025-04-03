@@ -6,6 +6,7 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./logs:/logs
+      - ./images:/images
       - ./app/alembic/versions:/app/alembic/versions
     restart: unless-stopped
     depends_on:

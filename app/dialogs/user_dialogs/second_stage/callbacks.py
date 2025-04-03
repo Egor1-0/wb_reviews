@@ -26,11 +26,6 @@ async def save_photo_and_video_review(message: Message, widget: MessageInput, di
     await dialog_manager.next()
 
 
-async def save_screenshot_review(message: Message, widget: MessageInput, dialog_manager: DialogManager):
-    dialog_manager.dialog_data['screenshot_review_id'] = message.photo[-1].file_id
-    await dialog_manager.next()
-
-
 async def save_article(message: Message, widget: ManagedTextInput, dialog_manager: DialogManager, data: str):
     dialog_manager.dialog_data['article'] = message.text
     await dialog_manager.next()
@@ -52,7 +47,6 @@ async def save_details_for_transfer(message: Message, widget: ManagedTextInput, 
     photo_review_id = dialog_manager.dialog_data.get('photo_review_id')
     video_review_id = dialog_manager.dialog_data.get('video_review_id')
     animation_review_id = dialog_manager.dialog_data.get('animation_review_id')
-    screenshot_review_id = dialog_manager.dialog_data['screenshot_review_id']
     article = dialog_manager.dialog_data['article']
     nickname = dialog_manager.dialog_data['nickname']
     phone_number = dialog_manager.dialog_data['phone_number']
@@ -71,7 +65,7 @@ async def save_details_for_transfer(message: Message, widget: ManagedTextInput, 
             f'Артикул товара: {article}\nИмя пользователя на WB: {nickname}\nНомер телефона пользователя: '
             f'{phone_number}\nРеквизиты пользователя для перевода: {details_for_transfer}')
 
-    media = [InputMediaPhoto(media=screenshot_review_id)]
+    media = []
 
     if photo_review_id:
         media.append(InputMediaPhoto(media=photo_review_id))
@@ -92,8 +86,7 @@ async def save_details_for_transfer(message: Message, widget: ManagedTextInput, 
                                                                                         promotion_id),
                                    reply_to_message_id=group[0].message_id)
 
-    await message.answer('Данные предоставлены модерации. Если все в порядке - вам придет уведомление, что '
-                         'кешбэк переведен на указанные реквизиты')
+    await message.answer('Благодарим за участие в акции. с вами свяжется менеджер в течение 2х недель!')
     if animation_review_id:
         os.remove(f'{animation_review_id}.mp4')
     await dialog_manager.done()

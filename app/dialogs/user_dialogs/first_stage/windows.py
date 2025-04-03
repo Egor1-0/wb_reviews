@@ -3,6 +3,7 @@ from aiogram.enums import ContentType
 from aiogram_dialog import Window
 from aiogram_dialog.widgets.input import MessageInput
 from aiogram_dialog.widgets.kbd import ScrollingGroup, Select, Column, Cancel, Back, Next
+from aiogram_dialog.widgets.media import DynamicMedia
 from aiogram_dialog.widgets.text import Const, Format
 
 from dialogs.user_dialogs.first_stage.callbacks import save_promotion_id, save_find_by_keywords_photo, \
@@ -39,6 +40,7 @@ select_promotion = Window(
 )
 
 warning_message = Window(
+    DynamicMedia('photo'),
     Format('Обязательные условия: ⬇\n\n'
            '‼отзывы оставлять в графе: «поделитесь впечатлениями»\n\n'
            '1. Найти товар по ключевой фразе: \n{promotion.keywords}\n\n'
