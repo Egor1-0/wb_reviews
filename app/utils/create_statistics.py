@@ -39,4 +39,4 @@ async def create_statistics_by_promotion_id(session: AsyncSession, promotion_id:
     }
 
     df = pd.DataFrame(data)
-    df.to_csv(f"statistics_{promotion_id}", index=False, encoding='utf-8')
+    df.to_csv(f"statistics_{promotion_id}.csv", index=False, encoding='utf-8')

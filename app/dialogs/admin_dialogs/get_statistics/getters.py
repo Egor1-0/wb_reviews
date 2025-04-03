@@ -13,5 +13,5 @@ async def get_promotions(dialog_manager: DialogManager, **kwargs):
 
 async def get_path_file(dialog_manager: DialogManager, **kwargs):
     promotion_id = dialog_manager.dialog_data['promotion_id']
-    file = MediaAttachment(type=ContentType.DOCUMENT, path=f'statistics_{promotion_id}')
+    file = MediaAttachment(type=ContentType.DOCUMENT, path=f'statistics_{promotion_id}.csv')
     return {"file": file}
