@@ -23,9 +23,7 @@ async def cmd_start(message: Message, session: AsyncSession, user_db: User, dial
 
 
 @router.callback_query(StartSecondStageCallbackData.filter())
-async def start_first_stage(callback: CallbackQuery, dialog_manager: DialogManager, session: AsyncSession,
+async def start_first_stage(callback: CallbackQuery, dialog_manager: DialogManager,
                             callback_data: StartSecondStageCallbackData):
-    await ParticipationDao.update(session, {'user_id': callback.from_user.id, 'promotion_id': callback_data.promotion_id},
-                                  {'status': Status.SECOND_STAGE})
     await dialog_manager.start(state=SecondStage.photo_or_video_review, mode=StartMode.RESET_STACK,
                                data={'promotion_id': callback_data.promotion_id})
